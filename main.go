@@ -21,32 +21,17 @@ import (
 //go:embed templates/config.yaml
 var configTemplate string
 
-//go:embed templates/amp/prompt.md
-var ampPrompt string
-
-//go:embed templates/amp/prd-generator.md
-var ampPRDGenerator string
-
-//go:embed templates/amp/prd-converter.md
-var ampPRDConverter string
-
 //go:embed templates/claude/prompt.md
 var claudePrompt string
-
-//go:embed templates/claude/prd-generator.md
-var claudePRDGenerator string
-
-//go:embed templates/claude/prd-converter.md
-var claudePRDConverter string
 
 //go:embed templates/copilot/prompt.md
 var copilotPrompt string
 
-//go:embed templates/copilot/prd-generator.md
-var copilotPRDGenerator string
+//go:embed templates/skills/prd-generator.md
+var prdGeneratorSkill string
 
-//go:embed templates/copilot/prd-converter.md
-var copilotPRDConverter string
+//go:embed templates/skills/prd-converter.md
+var prdConverterSkill string
 
 type Config struct {
 	Tool          string              `yaml:"tool"`
@@ -75,7 +60,7 @@ type UserStory struct {
 
 func main() {
 	initMode := flag.Bool("init", false, "Initialize ralph directory with config and templates")
-	tool := flag.String("tool", "", "Tool to use (required for --init): amp, claude, or copilot")
+	tool := flag.String("tool", "", "Tool to use (required for --init): claude or copilot")
 	maxIterations := flag.Int("max-iterations", 0, "Maximum number of iterations (overrides config)")
 	flag.Parse()
 
@@ -90,11 +75,11 @@ func main() {
 	if *initMode {
 		if *tool == "" {
 			fmt.Fprintf(os.Stderr, "Error: --tool flag is required for --init\n")
-			fmt.Fprintf(os.Stderr, "Usage: go-ralph --init --tool=<amp|claude|copilot>\n")
+			fmt.Fprintf(os.Stderr, "Usage: go-ralph --init --tool=<claude|copilot>\n")
 			os.Exit(1)
 		}
-		if *tool != "amp" && *tool != "claude" && *tool != "copilot" {
-			fmt.Fprintf(os.Stderr, "Error: Invalid tool '%s'. Must be 'amp', 'claude', or 'copilot'.\n", *tool)
+		if *tool != "claude" && *tool != "copilot" {
+			fmt.Fprintf(os.Stderr, "Error: Invalid tool '%s'. Must be 'claude' or 'copilot'.\n", *tool)
 			os.Exit(1)
 		}
 		runInit(*tool)
@@ -114,7 +99,7 @@ func main() {
 	// Load config
 	if !fileExists(configFile) {
 		fmt.Fprintf(os.Stderr, "Error: ralph/config.yaml not found\n")
-		fmt.Fprintf(os.Stderr, "Run 'go-ralph --init --tool=<amp|claude|copilot>' first to initialize\n")
+		fmt.Fprintf(os.Stderr, "Run 'go-ralph --init --tool=<claude|copilot>' first to initialize\n")
 		os.Exit(1)
 	}
 
@@ -249,8 +234,6 @@ func runInit(tool string) {
 	} else {
 		var promptContent string
 		switch tool {
-		case "amp":
-			promptContent = ampPrompt
 		case "claude":
 			promptContent = claudePrompt
 		case "copilot":
@@ -263,50 +246,47 @@ func runInit(tool string) {
 		fmt.Println("✓ Created ralph/prompt.md")
 	}
 
-	// Create skills directory based on tool
-	var skillsDir string
-	var prdGenContent, prdConvContent string
-
+	// Create skills based on tool
+	var skillsBaseDir string
 	switch tool {
-	case "amp", "copilot":
-		skillsDir = filepath.Join(workDir, ".github", "skills")
-		if tool == "amp" {
-			prdGenContent = ampPRDGenerator
-			prdConvContent = ampPRDConverter
-		} else {
-			prdGenContent = copilotPRDGenerator
-			prdConvContent = copilotPRDConverter
-		}
+	case "copilot":
+		skillsBaseDir = filepath.Join(workDir, ".github", "skills")
 	case "claude":
-		skillsDir = filepath.Join(workDir, ".claude", "skills")
-		prdGenContent = claudePRDGenerator
-		prdConvContent = claudePRDConverter
+		skillsBaseDir = filepath.Join(workDir, ".claude", "skills")
 	}
 
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating skills directory: %v\n", err)
+	// Create prd-generator skill
+	prdGenDir := filepath.Join(skillsBaseDir, "prd-generator")
+	if err := os.MkdirAll(prdGenDir, 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating prd-generator skill directory: %v\n", err)
 		os.Exit(1)
 	}
 
-	// Write skill files
-	prdGenPath := filepath.Join(skillsDir, "prd-generator.md")
+	prdGenPath := filepath.Join(prdGenDir, "SKILL.md")
 	if !promptOverwrite(prdGenPath) {
-		fmt.Println("Skipped prd-generator.md")
+		fmt.Println("Skipped prd-generator/SKILL.md")
 	} else {
-		if err := writeFile(prdGenPath, prdGenContent); err != nil {
-			fmt.Fprintf(os.Stderr, "Error writing prd-generator.md: %v\n", err)
+		if err := writeFile(prdGenPath, prdGeneratorSkill); err != nil {
+			fmt.Fprintf(os.Stderr, "Error writing prd-generator/SKILL.md: %v\n", err)
 			os.Exit(1)
 		}
 		relPath := strings.TrimPrefix(prdGenPath, workDir+"/")
 		fmt.Printf("✓ Created %s\n", relPath)
 	}
 
-	prdConvPath := filepath.Join(skillsDir, "prd-converter.md")
+	// Create prd-converter skill
+	prdConvDir := filepath.Join(skillsBaseDir, "prd-converter")
+	if err := os.MkdirAll(prdConvDir, 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating prd-converter skill directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	prdConvPath := filepath.Join(prdConvDir, "SKILL.md")
 	if !promptOverwrite(prdConvPath) {
-		fmt.Println("Skipped prd-converter.md")
+		fmt.Println("Skipped prd-converter/SKILL.md")
 	} else {
-		if err := writeFile(prdConvPath, prdConvContent); err != nil {
-			fmt.Fprintf(os.Stderr, "Error writing prd-converter.md: %v\n", err)
+		if err := writeFile(prdConvPath, prdConverterSkill); err != nil {
+			fmt.Fprintf(os.Stderr, "Error writing prd-converter/SKILL.md: %v\n", err)
 			os.Exit(1)
 		}
 		relPath := strings.TrimPrefix(prdConvPath, workDir+"/")

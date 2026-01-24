@@ -1,4 +1,4 @@
-# PRD Generator (AMP)
+# PRD Generator
 
 Generate a structured Product Requirements Document (PRD) in Markdown format.
 

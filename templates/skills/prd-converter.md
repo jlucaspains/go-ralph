@@ -1,4 +1,4 @@
-# PRD.md to PRD.json Converter (AMP)
+# PRD.md to PRD.json Converter
 
 Convert a Markdown PRD to the structured JSON format used by Ralph.
 

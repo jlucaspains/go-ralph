@@ -3,8 +3,6 @@ max_iterations: 10
 auto_archive: true
 prompt_file: prompt.md
 tool_args:
-  amp:
-    - "--dangerously-allow-all"
   claude:
     - "--dangerously-skip-permissions"
     - "--print"
