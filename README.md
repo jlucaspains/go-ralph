@@ -1,6 +1,6 @@
 # go-ralph
 
-Go implementation of Ralph - an autonomous AI agent loop for software development.
+Go implementation of Ralph - an autonomous AI agent loop for software development. This project was heavily inspired by [snarktank/ralph](https://github.com/snarktank/ralph)
 
 ## Overview
 
@@ -16,23 +16,12 @@ Ralph enables autonomous development by:
 
 ## Installation
 
-### Build from source
+> go-ralph requires go 1.25+ to build or install.
+
+### Install
 
 ```bash
-go build -o go-ralph
-```
-
-### Install directly
-
-```bash
-go install
-```
-
-### Install globally
-
-```bash
-# Copy to a directory in your PATH
-sudo cp go-ralph /usr/local/bin/
+go install github.com/jlucaspains/go-ralph@main
 ```
 
 ## Quick Start
@@ -51,7 +40,7 @@ This creates:
 
 2. **Create a PRD:**
 
-Create `.ralph/prd.json` with your project requirements (or use the prd-generator skill to create one from a description):
+Create `.ralph/prd.json` with your project requirements (or use the prd-generator and prd-converter skills to create one from a description):
 
 ```json
 {

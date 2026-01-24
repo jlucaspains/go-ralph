@@ -46,7 +46,7 @@ Take a PRD (markdown file or text) and convert it to `.ralph/prd.json` in your s
 
 **Each story must be completable in ONE Ralph iteration (one context window).**
 
-Ralph spawns a fresh Amp instance per iteration with no memory of previous work. If a story is too big, the LLM runs out of context before finishing and produces broken code.
+Ralph spawns a fresh AI instance per iteration with no memory of previous work. If a story is too big, the LLM runs out of context before finishing and produces broken code.
 
 ### Right-sized stories:
 - Add a database column and migration
@@ -124,6 +124,7 @@ Frontend stories are NOT complete until visually verified. Ralph will use the pl
 5. **branchName**: Derive from feature name, kebab-case, prefixed with `ralph/`
 6. **Always add**: "Typecheck passes" to every story's acceptance criteria
 7. **Always add**: "Playwright tests pass" to story's acceptance criteria where UI changes are made.
+8. **Never add**: User stories for testing, validation, or verification. **Always** include testing, validation, or verification in the acceptance criteria of the user story that made the change.
 
 ---
 
