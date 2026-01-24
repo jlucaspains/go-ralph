@@ -1,4 +1,4 @@
-module go-ralph
+module github.com/jlucaspains/go-ralph
 
 go 1.25.4
 
