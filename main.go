@@ -93,12 +93,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	ralphDir := filepath.Join(workDir, "ralph")
+	ralphDir := filepath.Join(workDir, ".ralph")
 	configFile := filepath.Join(ralphDir, "config.yaml")
 
 	// Load config
 	if !fileExists(configFile) {
-		fmt.Fprintf(os.Stderr, "Error: ralph/config.yaml not found\n")
+		fmt.Fprintf(os.Stderr, "Error: .ralph/config.yaml not found\n")
 		fmt.Fprintf(os.Stderr, "Run 'go-ralph --init --tool=<claude|copilot>' first to initialize\n")
 		os.Exit(1)
 	}
@@ -127,7 +127,7 @@ func main() {
 		if currentBranch != "" && lastBranch != "" && currentBranch != lastBranch {
 			// Archive the previous run
 			date := time.Now().Format("2006-01-02")
-			folderName := strings.TrimPrefix(lastBranch, "ralph/")
+			folderName := strings.TrimPrefix(lastBranch, ".ralph/")
 			archiveFolder := filepath.Join(archiveDir, date+"-"+folderName)
 
 			fmt.Printf("Archiving previous run: %s\n", lastBranch)
@@ -205,12 +205,12 @@ func runInit(tool string) {
 		os.Exit(1)
 	}
 
-	ralphDir := filepath.Join(workDir, "ralph")
+	ralphDir := filepath.Join(workDir, ".ralph")
 	fmt.Printf("Initializing Ralph for tool: %s\n\n", tool)
 
-	// Create ralph directory
+	// Create .ralph directory
 	if err := os.MkdirAll(ralphDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating ralph directory: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error creating .ralph directory: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -224,7 +224,7 @@ func runInit(tool string) {
 			fmt.Fprintf(os.Stderr, "Error writing config.yaml: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Println("✓ Created ralph/config.yaml")
+		fmt.Println("✓ Created .ralph/config.yaml")
 	}
 
 	// Write prompt.md
@@ -243,7 +243,7 @@ func runInit(tool string) {
 			fmt.Fprintf(os.Stderr, "Error writing prompt.md: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Println("✓ Created ralph/prompt.md")
+		fmt.Println("✓ Created .ralph/prompt.md")
 	}
 
 	// Create skills based on tool
@@ -295,7 +295,7 @@ func runInit(tool string) {
 
 	fmt.Println("\n✅ Ralph initialization complete!")
 	fmt.Println("\nNext steps:")
-	fmt.Println("1. Create your PRD in ralph/prd.json")
+	fmt.Println("1. Create your PRD in .ralph/prd.json")
 	fmt.Println("2. Run: go-ralph")
 }
 

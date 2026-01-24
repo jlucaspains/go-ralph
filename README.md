@@ -45,18 +45,18 @@ go-ralph --init --tool=claude    # Or --tool=copilot
 ```
 
 This creates:
-- `ralph/config.yaml` - Ralph configuration
-- `ralph/prompt.md` - Agent instructions for the selected tool
+- `.ralph/config.yaml` - Ralph configuration
+- `.ralph/prompt.md` - Agent instructions for the selected tool
 - `.github/skills/` or `.claude/skills/` - PRD generator and converter skills
 
 2. **Create a PRD:**
 
-Create `ralph/prd.json` with your project requirements (or use the prd-generator skill to create one from a description):
+Create `.ralph/prd.json` with your project requirements (or use the prd-generator skill to create one from a description):
 
 ```json
 {
   "project": "Add User Authentication",
-  "branchName": "ralph/add-auth",
+  "branchName": ".ralph/add-auth",
   "description": "Implement basic user authentication with login and signup",
   "userStories": [
     {
@@ -97,7 +97,7 @@ go-ralph 15                      # Positional arg also works
 
 ## Configuration
 
-Configuration is stored in `ralph/config.yaml`:
+Configuration is stored in `.ralph/config.yaml`:
 
 ```yaml
 tool: claude                    # AI tool: claude or copilot
@@ -130,16 +130,16 @@ One of the following AI tools must be installed and available in PATH:
 ### Project Structure
 
 Ralph expects:
-- `ralph/config.yaml` - Configuration (created by `--init`)
-- `ralph/prompt.md` - Agent instructions (created by `--init`)
-- `ralph/prd.json` - Product requirements document (you create this)
+- `.ralph/config.yaml` - Configuration (created by `--init`)
+- `.ralph/prompt.md` - Agent instructions (created by `--init`)
+- `.ralph/prd.json` - Product requirements document (you create this)
 
 ## How It Works
 
 Each Ralph iteration:
 
-1. **Reads the PRD** at `ralph/prd.json`
-2. **Reads progress log** at `ralph/progress.txt` to understand context
+1. **Reads the PRD** at `.ralph/prd.json`
+2. **Reads progress log** at `.ralph/progress.txt` to understand context
 3. **Checks the git branch** matches the PRD's `branchName`
 4. **Picks the highest priority user story** where `passes: false`
 5. **Implements the story** - writes code, makes changes
@@ -160,12 +160,12 @@ If max iterations is reached without completion, Ralph exits with an error code.
 
 When switching projects/branches, Ralph automatically archives the previous run:
 - Detects branch changes by reading `branchName` from `prd.json`
-- Archives `prd.json` and `progress.txt` to `ralph/archive/YYYY-MM-DD-branch-name/`
+- Archives `.ralph/prd.json` and `.ralph/progress.txt` to `.ralph/archive/YYYY-MM-DD-branch-name/`
 - Creates fresh progress log for the new work
 
 ### 📝 Progress Tracking
 
-Ralph maintains `ralph/progress.txt` with:
+Ralph maintains `.ralph/progress.txt` with:
 - Timestamp for each iteration
 - Story ID being worked on
 - Files changed
@@ -252,12 +252,12 @@ Converts a Markdown PRD to the JSON format Ralph expects.
 
 ## Files Created
 
-- `ralph/config.yaml` - Ralph configuration
-- `ralph/prompt.md` - Agent instructions
-- `ralph/prd.json` - Project requirements (you create)
-- `ralph/progress.txt` - Progress log
-- `ralph/archive/` - Archived runs organized by date and branch
-- `ralph/.last-branch` - Tracks last branch for archive detection
+- `.ralph/config.yaml` - Ralph configuration
+- `.ralph/prompt.md` - Agent instructions
+- `.ralph/prd.json` - Project requirements (you create)
+- `.ralph/progress.txt` - Progress log
+- `.ralph/archive/` - Archived runs organized by date and branch
+- `.ralph/.last-branch` - Tracks last branch for archive detection
 
 ## Tips
 
