@@ -15,7 +15,20 @@ import (
 )
 
 type PRD struct {
-	BranchName string `json:"branchName"`
+	Project      string      `json:"project"`
+	BranchName   string      `json:"branchName"`
+	Description  string      `json:"description"`
+	UserStories  []UserStory `json:"userStories"`
+}
+
+type UserStory struct {
+	ID                 string   `json:"id"`
+	Title              string   `json:"title"`
+	Description        string   `json:"description"`
+	AcceptanceCriteria []string `json:"acceptanceCriteria"`
+	Priority           int      `json:"priority"`
+	Passes             bool     `json:"passes"`
+	Notes              string   `json:"notes"`
 }
 
 func main() {
@@ -36,15 +49,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	scriptDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	workDir, err := os.Getwd()
 	if err != nil {
-		scriptDir, _ = os.Getwd()
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+		os.Exit(1)
 	}
 
-	prdFile := filepath.Join(scriptDir, "prd.json")
-	progressFile := filepath.Join(scriptDir, "progress.txt")
-	archiveDir := filepath.Join(scriptDir, "archive")
-	lastBranchFile := filepath.Join(scriptDir, ".last-branch")
+	ralphDir := filepath.Join(workDir, "ralph")
+	prdFile := filepath.Join(ralphDir, "prd.json")
+	progressFile := filepath.Join(ralphDir, "progress.txt")
+	archiveDir := filepath.Join(ralphDir, "archive")
+	lastBranchFile := filepath.Join(ralphDir, ".last-branch")
 
 	// Archive previous run if branch changed
 	if fileExists(prdFile) && fileExists(lastBranchFile) {
@@ -99,11 +114,11 @@ func main() {
 
 		switch *tool {
 		case "amp":
-			output, err = runToolWithInput(scriptDir, "amp", []string{"--dangerously-allow-all"}, "prompt.md")
+			output, err = runToolWithInput(ralphDir, "amp", []string{"--dangerously-allow-all"}, "prompt.md")
 		case "claude":
-			output, err = runToolWithInput(scriptDir, "claude", []string{"--dangerously-skip-permissions", "--print"}, "CLAUDE.md")
+			output, err = runToolWithInput(ralphDir, "claude", []string{"--dangerously-skip-permissions", "--print"}, "prompt.md")
 		case "copilot":
-			output, err = runToolWithInput(scriptDir, "copilot", []string{"--allow-all-tools"}, "COPILOT.md")
+			output, err = runToolWithInput(ralphDir, "copilot", []string{"--allow-all-tools"}, "prompt.md")
 		}
 
 		// Continue even on error (|| true behavior)
@@ -173,8 +188,8 @@ func initProgressFile(path string) {
 	writeFile(path, content)
 }
 
-func runToolWithInput(scriptDir, tool string, args []string, inputFile string) (string, error) {
-	inputPath := filepath.Join(scriptDir, inputFile)
+func runToolWithInput(ralphDir, tool string, args []string, inputFile string) (string, error) {
+	inputPath := filepath.Join(ralphDir, inputFile)
 
 	// Read input file
 	input, err := os.ReadFile(inputPath)
