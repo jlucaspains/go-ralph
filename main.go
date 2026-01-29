@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	_ "embed"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -42,20 +41,20 @@ type Config struct {
 }
 
 type PRD struct {
-	Project     string      `json:"project"`
-	BranchName  string      `json:"branchName"`
-	Description string      `json:"description"`
-	UserStories []UserStory `json:"userStories"`
+	Project     string      `yaml:"project"`
+	BranchName  string      `yaml:"branchName"`
+	Description string      `yaml:"description"`
+	UserStories []UserStory `yaml:"userStories"`
 }
 
 type UserStory struct {
-	ID                 string   `json:"id"`
-	Title              string   `json:"title"`
-	Description        string   `json:"description"`
-	AcceptanceCriteria []string `json:"acceptanceCriteria"`
-	Priority           int      `json:"priority"`
-	Passes             bool     `json:"passes"`
-	Notes              string   `json:"notes"`
+	ID                 string   `yaml:"id"`
+	Title              string   `yaml:"title"`
+	Description        string   `yaml:"description"`
+	AcceptanceCriteria []string `yaml:"acceptanceCriteria"`
+	Priority           int      `yaml:"priority"`
+	Passes             bool     `yaml:"passes"`
+	Notes              string   `yaml:"notes"`
 }
 
 func main() {
@@ -114,7 +113,7 @@ func main() {
 		config.MaxIterations = *maxIterations
 	}
 
-	prdFile := filepath.Join(ralphDir, "prd.json")
+	prdFile := filepath.Join(ralphDir, "prd.yaml")
 	progressFile := filepath.Join(ralphDir, "progress.txt")
 	archiveDir := filepath.Join(ralphDir, "archive")
 	lastBranchFile := filepath.Join(ralphDir, ".last-branch")
@@ -134,7 +133,7 @@ func main() {
 			if err := os.MkdirAll(archiveFolder, 0755); err != nil {
 				fmt.Fprintf(os.Stderr, "Warning: failed to create archive folder: %v\n", err)
 			} else {
-				copyFile(prdFile, filepath.Join(archiveFolder, "prd.json"))
+				copyFile(prdFile, filepath.Join(archiveFolder, "prd.yaml"))
 				copyFile(progressFile, filepath.Join(archiveFolder, "progress.txt"))
 				fmt.Printf("   Archived to: %s\n", archiveFolder)
 			}
@@ -295,7 +294,7 @@ func runInit(tool string) {
 
 	fmt.Println("\n✅ Ralph initialization complete!")
 	fmt.Println("\nNext steps:")
-	fmt.Println("1. Create your PRD in .ralph/prd.json")
+	fmt.Println("1. Create your PRD in .ralph/prd.yaml")
 	fmt.Println("2. Run: go-ralph")
 }
 
@@ -361,7 +360,7 @@ func getBranchFromPRD(prdFile string) string {
 	}
 
 	var prd PRD
-	if err := json.Unmarshal(data, &prd); err != nil {
+	if err := yaml.Unmarshal(data, &prd); err != nil {
 		return ""
 	}
 

@@ -40,29 +40,23 @@ This creates:
 
 2. **Create a PRD:**
 
-Create `.ralph/prd.json` with your project requirements (or use the prd-generator and prd-converter skills to create one from a description):
+Create `.ralph/prd.yaml` with your project requirements (or use the prd-generator and prd-converter skills to create one from a description):
 
-```json
-{
-  "project": "Add User Authentication",
-  "branchName": ".ralph/add-auth",
-  "description": "Implement basic user authentication with login and signup",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Create login form",
-      "description": "Create a login form component with email and password fields",
-      "acceptanceCriteria": [
-        "Form renders with email and password fields",
-        "Form validates input before submission",
-        "Tests pass"
-      ],
-      "priority": 1,
-      "passes": false,
-      "notes": ""
-    }
-  ]
-}
+```yaml
+project: Add User Authentication
+branchName: ".ralph/add-auth"
+description: Implement basic user authentication with login and signup
+userStories:
+- id: US-001
+  title: Create login form
+  description: Create a login form component with email and password fields
+  acceptanceCriteria:
+  - Form renders with email and password fields
+  - Form validates input before submission
+  - Tests pass
+  priority: 1
+  passes: false
+  notes: ''
 ```
 
 3. **Run Ralph:**
@@ -121,13 +115,13 @@ One of the following AI tools must be installed and available in PATH:
 Ralph expects:
 - `.ralph/config.yaml` - Configuration (created by `--init`)
 - `.ralph/prompt.md` - Agent instructions (created by `--init`)
-- `.ralph/prd.json` - Product requirements document (you create this)
+- `.ralph/prd.yaml` - Product requirements document (you create this)
 
 ## How It Works
 
 Each Ralph iteration:
 
-1. **Reads the PRD** at `.ralph/prd.json`
+1. **Reads the PRD** at `.ralph/prd.yaml`
 2. **Reads progress log** at `.ralph/progress.txt` to understand context
 3. **Checks the git branch** matches the PRD's `branchName`
 4. **Picks the highest priority user story** where `passes: false`
@@ -148,8 +142,8 @@ If max iterations is reached without completion, Ralph exits with an error code.
 ### 🔄 Automatic Archiving
 
 When switching projects/branches, Ralph automatically archives the previous run:
-- Detects branch changes by reading `branchName` from `prd.json`
-- Archives `.ralph/prd.json` and `.ralph/progress.txt` to `.ralph/archive/YYYY-MM-DD-branch-name/`
+- Detects branch changes by reading `branchName` from `prd.yaml`
+- Archives `.ralph/prd.yaml` and `.ralph/progress.txt` to `.ralph/archive/YYYY-MM-DD-branch-name/`
 - Creates fresh progress log for the new work
 
 ### 📝 Progress Tracking
@@ -186,28 +180,22 @@ Continues on tool failures (exit code is not fatal), allowing for retries across
 
 ## PRD Format
 
-The `prd.json` file defines what Ralph should build:
+The `prd.yaml` file defines what Ralph should build:
 
-```json
-{
-  "project": "Project Name",
-  "branchName": "ralph/feature-name",
-  "description": "High-level description of the project",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Short story title",
-      "description": "Detailed description of what needs to be built",
-      "acceptanceCriteria": [
-        "Specific, testable criterion 1",
-        "Specific, testable criterion 2"
-      ],
-      "priority": 1,
-      "passes": false,
-      "notes": ""
-    }
-  ]
-}
+```yaml
+project: Project Name
+branchName: ralph/feature-name
+description: High-level description of the project
+userStories:
+- id: US-001
+  title: Short story title
+  description: Detailed description of what needs to be built
+  acceptanceCriteria:
+  - Specific, testable criterion 1
+  - Specific, testable criterion 2
+  priority: 1
+  passes: false
+  notes: ''
 ```
 
 **Fields:**
@@ -237,13 +225,13 @@ Generates a structured PRD in Markdown format from a feature description.
 
 Located in `.github/skills/prd-converter/` or `.claude/skills/prd-converter/`
 
-Converts a Markdown PRD to the JSON format Ralph expects.
+Converts a Markdown PRD to the YAML format Ralph expects.
 
 ## Files Created
 
 - `.ralph/config.yaml` - Ralph configuration
 - `.ralph/prompt.md` - Agent instructions
-- `.ralph/prd.json` - Project requirements (you create)
+- `.ralph/prd.yaml` - Project requirements (you create)
 - `.ralph/progress.txt` - Progress log
 - `.ralph/archive/` - Archived runs organized by date and branch
 - `.ralph/.last-branch` - Tracks last branch for archive detection
