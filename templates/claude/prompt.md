@@ -4,7 +4,7 @@ You are an autonomous coding agent working on a software project.
 
 ## Your Task
 
-1. Read the PRD at `.ralph/prd.json`. If you don't find this file, abort and inform the user the file is required.
+1. Read the PRD at `.ralph/prd.yaml`. If you don't find this file, abort and inform the user the file is required.
 2. Read the progress log at `.ralph/progress.txt` (check Codebase Patterns section first)
 3. Check you're on the correct branch from PRD `branchName`. If not, check it out or create from main.
 4. Pick the **highest priority** user story where `passes: false`
@@ -49,7 +49,7 @@ Only add patterns that are **general and reusable**, not story-specific details.
 Before committing, check if any edited files have learnings worth preserving in nearby CLAUDE.md files:
 
 1. **Identify directories with edited files** - Look at which directories you modified
-2. **Check for existing CLAUDE.md** - Look for CLAUDE.md in those directories or parent directories
+2. **Check for existing CLAUDE.md** - Look for CLAUDE.md in those directories or parent directories. If none is found, create one at the root of the repository.
 3. **Add valuable learnings** - If you discovered something future developers/agents should know:
    - API patterns or conventions specific to that module
    - Gotchas or non-obvious requirements

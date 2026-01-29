@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -178,7 +177,7 @@ func TestCopyFile(t *testing.T) {
 func TestGetBranchFromPRD(t *testing.T) {
 	t.Run("valid PRD file", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		prdFile := filepath.Join(tmpDir, "prd.json")
+		prdFile := filepath.Join(tmpDir, "prd.yaml")
 
 		prd := PRD{
 			Project:     "Test Project",
@@ -186,7 +185,7 @@ func TestGetBranchFromPRD(t *testing.T) {
 			Description: "Test description",
 		}
 
-		data, err := json.Marshal(prd)
+		data, err := yaml.Marshal(prd)
 		if err != nil {
 			t.Fatalf("Failed to marshal PRD: %v", err)
 		}
@@ -202,23 +201,23 @@ func TestGetBranchFromPRD(t *testing.T) {
 	})
 
 	t.Run("non-existent file", func(t *testing.T) {
-		branch := getBranchFromPRD("/nonexistent/prd.json")
+		branch := getBranchFromPRD("/nonexistent/prd.yaml")
 		if branch != "" {
 			t.Errorf("Expected empty string, got '%s'", branch)
 		}
 	})
 
-	t.Run("invalid JSON", func(t *testing.T) {
+	t.Run("invalid YAML", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		prdFile := filepath.Join(tmpDir, "prd.json")
+		prdFile := filepath.Join(tmpDir, "prd.yaml")
 
-		if err := os.WriteFile(prdFile, []byte("invalid json"), 0644); err != nil {
+		if err := os.WriteFile(prdFile, []byte("invalid yaml"), 0644); err != nil {
 			t.Fatalf("Failed to create PRD file: %v", err)
 		}
 
 		branch := getBranchFromPRD(prdFile)
 		if branch != "" {
-			t.Errorf("Expected empty string for invalid JSON, got '%s'", branch)
+			t.Errorf("Expected empty string for invalid YAML, got '%s'", branch)
 		}
 	})
 }
@@ -305,13 +304,13 @@ func TestPRDStruct(t *testing.T) {
 			},
 		}
 
-		data, err := json.Marshal(&prd)
+		data, err := yaml.Marshal(&prd)
 		if err != nil {
 			t.Fatalf("Failed to marshal PRD: %v", err)
 		}
 
 		var unmarshaled PRD
-		if err := json.Unmarshal(data, &unmarshaled); err != nil {
+		if err := yaml.Unmarshal(data, &unmarshaled); err != nil {
 			t.Fatalf("Failed to unmarshal PRD: %v", err)
 		}
 
@@ -345,13 +344,13 @@ func TestUserStoryStruct(t *testing.T) {
 		Notes:    "Test notes",
 	}
 
-	data, err := json.Marshal(&story)
+	data, err := yaml.Marshal(&story)
 	if err != nil {
 		t.Fatalf("Failed to marshal UserStory: %v", err)
 	}
 
 	var unmarshaled UserStory
-	if err := json.Unmarshal(data, &unmarshaled); err != nil {
+	if err := yaml.Unmarshal(data, &unmarshaled); err != nil {
 		t.Fatalf("Failed to unmarshal UserStory: %v", err)
 	}
 
