@@ -8,3 +8,9 @@ tool_args:
     - "--print"
   copilot:
     - "--allow-all-tools"
+    - "--deny-tool 'shell(git push)'"
+    - "--deny-tool 'shell(chmod)'"
+    - "--deny-tool 'shell(chown)'"
+    - "--deny-tool 'shell(apt)'"
+    - "--deny-tool 'shell(brew)'"
+    - "--deny-tool 'shell(sudo)'"
